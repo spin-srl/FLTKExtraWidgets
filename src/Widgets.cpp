@@ -196,9 +196,10 @@ void QButton::draw() {
 	fl_color(active() ? color() : FL_GRAY);
 	fl_rectf(x(), y(), w(), h());
 
-	fl_color(labelcolor());
-	fl_font(labelfont(), labelsize());
-	fl_draw(label(), x(), y(), w(), h(), align() | FL_ALIGN_INSIDE, image(), true);
+	draw_label();
+	// fl_color(active ? labelcolor() : fl_lighter(FL_GRAY));
+	// fl_font(labelfont(), labelsize());
+	// fl_draw(label(), x(), y(), w(), h(), align() | FL_ALIGN_INSIDE, image(), true);
 }
 
 // =================================================================
