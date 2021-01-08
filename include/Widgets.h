@@ -8,6 +8,8 @@
 #include <Fl/Fl_Button.H>
 #include <Fl/Fl_Value_Input.H>
 
+#include <FL/Fl_Choice.H>
+
 class QScroll: public Fl_Scroll
 {
 public:
@@ -47,3 +49,14 @@ public:
 	void draw();
 	int handle(int evt);
 };
+
+class QChoice: public Fl_Choice{
+    int HANDLE_WIDTH=5;
+public:
+        QChoice();
+        QChoice(int x,int y,int w,int h,const char* l=0);
+
+        void draw();
+        int handle(int evt);
+};
+
