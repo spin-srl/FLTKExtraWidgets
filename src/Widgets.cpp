@@ -2,6 +2,9 @@
 #include <Fl/Fl_Double_Window.H>
 #include <Fl/names.h>
 #include <math.h>
+#include <Fl/fl_draw.H>
+#include <Fl/Fl_Box.H>
+#include <Fl/Enumerations.H>
 
 // ========================= SCROLL
 QScroll::QScroll(int x, int y, int w, int h, const char* l): Fl_Scroll(x, y, w, h, l)
@@ -274,8 +277,7 @@ void QChoice::draw()
     fl_push_clip(x(), y(), w(), h());
 
     //Background
-    fl_color(color());
-    fl_rectf(x(), y(), w(), h());
+    fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w(), h(), color());
 
     //Label
     fl_color(this->labelcolor());
@@ -283,15 +285,16 @@ void QChoice::draw()
     fl_draw(this->text(), x(), y(), w() - 20, h(), FL_ALIGN_CENTER, image(), 1);
 
     //HoverIndictor Rect
-    fl_color(fl_darker(color()));
-    fl_rectf(x() + w() - HANDLE_WIDTH, y(), HANDLE_WIDTH, h());
+    fl_color(fl_color_average(color(), FL_BLACK, 0.95));
+    fl_rectf(x() + w() - 20, y() + 1, 20 - 1, h() - 2);
 
     //Down-Arrow
-    if (HANDLE_WIDTH == 20)
+//    if (HANDLE_WIDTH == 20)
     {
         int TCenterX = x() + w() - 10;
-        int TCenterY = y() + h() / 2;
-        fl_color(color());
+        int TCenterY = y() + (h() / 2) + 2;
+
+        fl_color(Fl::belowmouse() == this ? FL_BLACK : fl_darker(color()));
         fl_begin_polygon();
         fl_vertex(TCenterX - 5, TCenterY - 3);
         fl_vertex(TCenterX + 5, TCenterY - 3);
@@ -307,7 +310,7 @@ int QChoice::handle(int evt)
     switch (evt)
     {
     case FL_ENTER:
-        this->HANDLE_WIDTH = 20;
+//        this->HANDLE_WIDTH = 20;
         fl_cursor(FL_CURSOR_HAND);
         redraw();
         Fl::awake();
@@ -315,7 +318,7 @@ int QChoice::handle(int evt)
         return 1;
 
     case FL_LEAVE:
-        this->HANDLE_WIDTH = 5;
+//        this->HANDLE_WIDTH = 5;
         fl_cursor(FL_CURSOR_DEFAULT);
         redraw();
         Fl::awake();
@@ -324,4 +327,61 @@ int QChoice::handle(int evt)
     }
 
     return Fl_Choice::handle(evt);
+}
+
+
+FilePicker::FilePicker(const char* fname, const char* ext, const char* title): Fl_Native_File_Chooser(Type::BROWSE_FILE)
+{
+    this->options(Fl_Native_File_Chooser::USE_FILTER_EXT);
+    this->filter(ext);
+    this->directory(".");
+    this->preset_file(fname);
+    this->title(title == 0 ? "Seleccione el archivo" : title);
+}
+
+FileSaver::FileSaver(const char* fname, const  char* ext, const  char* title): Fl_Native_File_Chooser(Type::BROWSE_SAVE_FILE)
+{
+    this->options(Fl_Native_File_Chooser::SAVEAS_CONFIRM |
+                  Fl_Native_File_Chooser::USE_FILTER_EXT |
+                  Fl_Native_File_Chooser::NEW_FOLDER
+                 );
+    this->filter(ext);
+    this->preset_file(fname);
+    this->directory(".");
+    this->title(title == 0 ? "Seleccione el archivo" : title);
+}
+
+QCheck::QCheck(int x, int y, int w, int h, const char* l): Fl_Check_Button(x, y, w, h, l) {}
+
+void QCheck::draw()
+{
+    //BG
+    {
+        Fl_Color bg_color = value() ? 10 : color();
+
+        if (Fl::belowmouse() == this)
+        {
+            bg_color = fl_color_average(bg_color, FL_BLACK, 0.9);
+        }
+
+        fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w(), h(), bg_color);
+    }
+
+    //LABEL
+    fl_color(labelcolor());
+    fl_font(labelfont(), labelsize());
+    fl_draw(label(), x() + 5, y(), w() - 20 - 10, h(), align(), NULL, 1);
+
+    //CHECKMARK
+    if (value())
+    {
+#define V(X, Y) fl_vertex(x()+w()-10+X,y()+h()/2+Y);
+//        fl_rectf(x() + w() - 18, y() + 1, 16, h() - 2, 10);
+        fl_color(FL_BLACK);
+        fl_begin_line();
+        V(-5, 0);
+        V(0, 4);
+        V(5, -6);
+        fl_end_line();
+    }
 }
