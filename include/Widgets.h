@@ -12,6 +12,8 @@
 
 #include <FL/Fl_Choice.H>
 
+#define FLTK_CONSTRUCTOR(CLASSNAME) CLASSNAME(int x,int y,int w,int h,const char* l=0)
+
 class QScroll: public Fl_Scroll
 {
 public:
@@ -24,6 +26,7 @@ public:
 	int scroll_h;
 	int content_height = 1;
 	float scroll_y_ratio = 0;
+        void resize(int X, int Y, int W, int H);
 };
 
 class QButton: public Fl_Button {
@@ -75,7 +78,23 @@ public:
 
 class QCheck: public Fl_Check_Button{
 public:
-    QCheck(int x,int y,int w,int h,const char *l);;
+    QCheck(int x,int y,int w,int h,const char *l=0);
 
     void draw();
 };
+
+class QCloseButton: public Fl_Button{
+public:
+    QCloseButton(int x,int y,int w,int h,const char*l=0);
+
+    void draw();
+};
+
+class DraggingWindow: public Fl_Double_Window{
+public:
+    FLTK_CONSTRUCTOR(DraggingWindow);
+
+    int handle(int event);
+};
+
+void SetTopMost(Fl_Window* w);
