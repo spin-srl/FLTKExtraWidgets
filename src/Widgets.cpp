@@ -55,11 +55,11 @@ void QScroll::draw()
 
 	//Handle
 	fl_draw_box(FL_RFLAT_BOX,
-                x() + w() - scroll_w + 2,
-                scroll_y,
-                scroll_w - 4,
-                scroll_h,
-                selection_color());
+	            x() + w() - scroll_w + 2,
+	            scroll_y,
+	            scroll_w - 4,
+	            scroll_h,
+	            selection_color());
 
 	fl_pop_clip();
 }
@@ -86,8 +86,8 @@ int QScroll::handle(int evt)
 		if (Dragging)
 		{
 			scroll_y_ratio = ((Fl::event_y() - y()) - (float)(scroll_v_margin + scroll_h / 2))
-                             /
-                             (float)(h() - 2 * scroll_v_margin - scroll_h);
+			                 /
+			                 (float)(h() - 2 * scroll_v_margin - scroll_h);
 
 			if (scroll_y_ratio > 1)
 			{
@@ -169,17 +169,17 @@ int QScroll::handle(int evt)
 		break;
 	}
 
-    return Fl_Scroll::handle(evt);
+	return Fl_Scroll::handle(evt);
 }
 
 void QScroll::resize(int X, int Y, int W, int H)
 {
-    for (int child_id = 0; child_id < children(); ++child_id)
-    {
-        child(child_id)->size(W, child(child_id)->h());
-    }
+	for (int child_id = 0; child_id < children(); ++child_id)
+	{
+		child(child_id)->size(W, child(child_id)->h());
+	}
 
-    Fl_Scroll::resize(X, Y, W, H);
+	Fl_Scroll::resize(X, Y, W, H);
 }
 
 // ========================= BUTTON
@@ -292,126 +292,127 @@ QChoice::QChoice(int x, int y, int w, int h, const char* l): Fl_Choice(x, y, w, 
 
 void QChoice::draw()
 {
-    fl_push_clip(x(), y(), w(), h());
+	fl_push_clip(x(), y(), w(), h());
 
-    //Background
-    fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w(), h(), color());
+	//Background
+	fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w(), h(), color());
 
-    //Label
-    fl_color(this->labelcolor());
-    fl_font(this->labelfont(), this->labelsize());
-    fl_draw(this->text(), x(), y(), w() - 20, h(), FL_ALIGN_CENTER, image(), 1);
+	//Label
+	fl_color(this->labelcolor());
+	fl_font(this->labelfont(), this->labelsize());
+	fl_draw(this->text(), x(), y(), w() - 20, h(), FL_ALIGN_CENTER, image(), 1);
 
-    //HoverIndictor Rect
-    fl_color(fl_color_average(color(), FL_BLACK, 0.95));
-    fl_rectf(x() + w() - 20, y() + 1, 20 - 1, h() - 2);
+	//HoverIndictor Rect
+	fl_color(fl_color_average(color(), FL_BLACK, 0.95));
+	fl_rectf(x() + w() - 20, y() + 1, 20 - 1, h() - 2);
 
-    //Down-Arrow
+	//Down-Arrow
 //    if (HANDLE_WIDTH == 20)
-    {
-        int TCenterX = x() + w() - 10;
-        int TCenterY = y() + (h() / 2) + 2;
+	{
+		int TCenterX = x() + w() - 10;
+		int TCenterY = y() + (h() / 2) + 2;
 
-        fl_color(Fl::belowmouse() == this ? FL_BLACK : fl_darker(color()));
-        fl_begin_polygon();
-        fl_vertex(TCenterX - 5, TCenterY - 3);
-        fl_vertex(TCenterX + 5, TCenterY - 3);
-        fl_vertex(TCenterX, TCenterY + 2);
-        fl_end_polygon();
-    }
+		fl_color(Fl::belowmouse() == this ? FL_BLACK : fl_darker(color()));
+		fl_begin_polygon();
+		fl_vertex(TCenterX - 5, TCenterY - 3);
+		fl_vertex(TCenterX + 5, TCenterY - 3);
+		fl_vertex(TCenterX, TCenterY + 2);
+		fl_end_polygon();
+	}
 
-    fl_pop_clip();
+	fl_pop_clip();
 }
 
 int QChoice::handle(int evt)
 {
-    switch (evt)
-    {
-    case FL_ENTER:
+	switch (evt)
+	{
+	case FL_ENTER:
 //        this->HANDLE_WIDTH = 20;
-        fl_cursor(FL_CURSOR_HAND);
-        redraw();
-        Fl::awake();
+		fl_cursor(FL_CURSOR_HAND);
+		redraw();
+		Fl::awake();
 
-        return 1;
+		return 1;
 
-    case FL_LEAVE:
+	case FL_LEAVE:
 //        this->HANDLE_WIDTH = 5;
-        fl_cursor(FL_CURSOR_DEFAULT);
-        redraw();
-        Fl::awake();
+		fl_cursor(FL_CURSOR_DEFAULT);
+		redraw();
+		Fl::awake();
 
-        return 1;
-    }
+		return 1;
+	}
 
-    return Fl_Choice::handle(evt);
+	return Fl_Choice::handle(evt);
 }
 
 
 FilePicker::FilePicker(const char* fname, const char* ext, const char* title): Fl_Native_File_Chooser(Type::BROWSE_FILE)
 {
-    this->options(Fl_Native_File_Chooser::USE_FILTER_EXT);
-    this->filter(ext);
-    this->directory(".");
-    this->preset_file(fname);
-    this->title(title == 0 ? "Seleccione el archivo" : title);
+	this->options(Fl_Native_File_Chooser::USE_FILTER_EXT);
+	this->filter(ext);
+	this->directory(".");
+	this->preset_file(fname);
+	this->title(title == 0 ? "Seleccione el archivo" : title);
 }
 
 FileSaver::FileSaver(const char* fname, const  char* ext, const  char* title): Fl_Native_File_Chooser(Type::BROWSE_SAVE_FILE)
 {
-    this->options(Fl_Native_File_Chooser::SAVEAS_CONFIRM |
-                  Fl_Native_File_Chooser::USE_FILTER_EXT |
-                  Fl_Native_File_Chooser::NEW_FOLDER
-                 );
-    this->filter(ext);
-    this->preset_file(fname);
-    this->directory(".");
-    this->title(title == 0 ? "Seleccione el archivo" : title);
+	this->options(Fl_Native_File_Chooser::SAVEAS_CONFIRM |
+	              Fl_Native_File_Chooser::USE_FILTER_EXT |
+	              Fl_Native_File_Chooser::NEW_FOLDER
+	             );
+	this->filter(ext);
+	this->preset_file(fname);
+	this->directory(".");
+	this->title(title == 0 ? "Seleccione el archivo" : title);
 }
 
 QCheck::QCheck(int x, int y, int w, int h, const char* l): Fl_Check_Button(x, y, w, h, l) {}
 
 void QCheck::draw()
 {
-    //BG
-    {
-        Fl_Color bg_color = value() ? 10 : color();
+	//BG
+	{
+		Fl_Color bg_color = value() ? 10 : color();
 
-        if (Fl::belowmouse() == this)
-        {
-            bg_color = fl_color_average(bg_color, FL_BLACK, 0.9);
-        }
+		if (Fl::belowmouse() == this)
+		{
+			bg_color = fl_color_average(bg_color, FL_BLACK, 0.9);
+		}
 
 //        fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w(), h(), bg_color);
 //        fl_draw_box(FL_BORDER_BOX, x() + w() - h() - 4, y() + 2, 20, h() - 4, bg_color);
-        fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w() - 21, h(), bg_color);
-        fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x() + w() - 20, y(), 20, h(), bg_color);
-    }
+		fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w() - 21, h(), bg_color);
+		fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x() + w() - 20, y(), 20, h(), bg_color);
+	}
 
-    //LABEL
-    fl_color(labelcolor());
-    fl_font(labelfont(), labelsize());
-    fl_draw(label(), x() + 5, y(), w() - 20 - 10, h(), align(), NULL, 1);
+	//LABEL
+	fl_color(labelcolor());
+	fl_font(labelfont(), labelsize());
+	fl_draw(label(), x() + 5, y(), w() - 20 - 10, h(), align(), NULL, 1);
 
-    //CHECKMARK
-    if (value())
-    {
+	//CHECKMARK
+	if (value())
+	{
 #undef V
 #define V(X, Y) fl_vertex(x()+w()-10+X,y()+h()/2+Y);
 //        fl_rectf(x() + w() - 18, y() + 1, 16, h() - 2, 10);
-        fl_color(FL_BLACK);
-        fl_begin_line();
-        V(-5, 0);
-        V(0, 4);
-        V(5, -6);
-        fl_end_line();
-    }
-    else
-    {
-        fl_color(fl_lighter(labelcolor()));
-        fl_font(labelfont(), labelsize() - 2);
-        fl_draw("no", x() + w() - 20, y(), 20, h(), FL_ALIGN_CENTER, NULL, true);
-    }
+		fl_color(FL_BLACK);
+		fl_begin_line();
+		V(-5, 0);
+		V(0, 4);
+		V(5, -6);
+		fl_end_line();
+	}
+
+	else
+	{
+		fl_color(fl_lighter(labelcolor()));
+		fl_font(labelfont(), labelsize() - 2);
+		fl_draw("no", x() + w() - 20, y(), 20, h(), FL_ALIGN_CENTER, NULL, true);
+	}
 }
 
 QCloseButton::QCloseButton(int x, int y, int w, int h, const char* l): Fl_Button(x, y, w, h, l)
@@ -420,51 +421,55 @@ QCloseButton::QCloseButton(int x, int y, int w, int h, const char* l): Fl_Button
 
 void QCloseButton::draw()
 {
-    Fl_Button::draw();
+	Fl_Button::draw();
 #undef V
 #define V(X,Y) fl_vertex(x()+w()/2+X,y()+h()/2+Y)
-    const int R = h() / ((Fl::belowmouse() == this) ? 4 : 6);
-    fl_color(FL_WHITE);
+	const int R = h() / ((Fl::belowmouse() == this) ? 4 : 6);
+	fl_color(FL_WHITE);
 
-    fl_begin_line();
-    V(-R, -R);
-    V(R, R);
-    fl_end_line();
-    fl_begin_line();
-    V(-R, R);
-    V(R, -R);
-    fl_end_line();
+	fl_begin_line();
+	V(-R, -R);
+	V(R, R);
+	fl_end_line();
+	fl_begin_line();
+	V(-R, R);
+	V(R, -R);
+	fl_end_line();
+}
+
+DraggingWindow::DraggingWindow(int x, int y, int w, int h, const char* l): Fl_Double_Window(x, y, w, h, l) {
+
 }
 
 int DraggingWindow::handle(int event)
 {
-    static int xoff, yoff;
+	static int xoff, yoff;
 
-    switch (event)
-    {
-    case FL_PUSH:
-        xoff = this->x() - Fl::event_x_root();
-        yoff = this->y() - Fl::event_y_root();
-        Fl_Double_Window::handle(event);
-        return 1; //Must always return 1
+	switch (event)
+	{
+	case FL_PUSH:
+		xoff = this->x() - Fl::event_x_root();
+		yoff = this->y() - Fl::event_y_root();
+		Fl_Double_Window::handle(event);
+		return 1; //Must always return 1
 
-    case FL_DRAG:
-        this->position(xoff + Fl::event_x_root(), yoff + Fl::event_y_root());
-        this->redraw();
-        break;
+	case FL_DRAG:
+		this->position(xoff + Fl::event_x_root(), yoff + Fl::event_y_root());
+		this->redraw();
+		break;
 
-    case FL_RELEASE:
-        this->show();
-        break;
-    }
+	case FL_RELEASE:
+		this->show();
+		break;
+	}
 
-    return Fl_Double_Window::handle(event);
+	return Fl_Double_Window::handle(event);
 }
 
 void SetTopMost(Fl_Window* w)
 {
 #ifdef _WINDOWS_
-    SetWindowPos(fl_xid(w), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	SetWindowPos(fl_xid(w), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 #else
 
 #endif

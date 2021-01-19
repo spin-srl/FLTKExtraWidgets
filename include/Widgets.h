@@ -16,20 +16,22 @@
 
 class QScroll: public Fl_Scroll
 {
+	void draw() override;
+	int handle(int evt) override;
 public:
 	QScroll();
 	QScroll(int x, int y, int w, int h, const char* l = 0);
 
-	void draw();
-	int handle(int evt);
 
 	int scroll_h;
 	int content_height = 1;
 	float scroll_y_ratio = 0;
-        void resize(int X, int Y, int W, int H);
+	void resize(int X, int Y, int W, int H);
 };
 
 class QButton: public Fl_Button {
+	void draw();
+	int handle(int evt);
 public:
 	QButton();
 	QButton(int x, int y, int w, int h, const char* l = 0);
@@ -42,59 +44,57 @@ public:
 	int bar_width = 1;
 	bool hovered = false;
 
-	void draw();
-	int handle(int evt);
 };
 
 class QInput: public Fl_Value_Input {
+	void draw();
+	int handle(int evt);
 public:
 	QInput();
 	QInput(int x, int y, int w, int h, const char* l = 0);
 
-	void draw();
-	int handle(int evt);
 };
 
-class QChoice: public Fl_Choice{
+class QChoice: public Fl_Choice {
+	void draw();
+	int handle(int evt);
 public:
-        QChoice();
-        QChoice(int x,int y,int w,int h,const char* l=0);
+	QChoice();
+	QChoice(int x, int y, int w, int h, const char* l = 0);
 
-        void draw();
-        int handle(int evt);
 };
 
 class FilePicker: public Fl_Native_File_Chooser
 {
 public:
-        FilePicker(const char* fname, const char* ext = 0, const char* title = 0);
+	FilePicker(const char* fname, const char* ext = 0, const char* title = 0);
 };
 
 class FileSaver: public Fl_Native_File_Chooser
 {
 public:
-        FileSaver(const char* fname, const char* ext = 0, const  char* title = 0);
+	FileSaver(const char* fname, const char* ext = 0, const  char* title = 0);
 };
 
-class QCheck: public Fl_Check_Button{
+class QCheck: public Fl_Check_Button {
 public:
-    QCheck(int x,int y,int w,int h,const char *l=0);
+	QCheck(int x, int y, int w, int h, const char* l = 0);
 
-    void draw();
+	void draw();
 };
 
-class QCloseButton: public Fl_Button{
+class QCloseButton: public Fl_Button {
 public:
-    QCloseButton(int x,int y,int w,int h,const char*l=0);
+	QCloseButton(int x, int y, int w, int h, const char* l = 0);
 
-    void draw();
+	void draw();
 };
 
-class DraggingWindow: public Fl_Double_Window{
+class DraggingWindow: public Fl_Double_Window {
 public:
-    FLTK_CONSTRUCTOR(DraggingWindow);
+	FLTK_CONSTRUCTOR(DraggingWindow);
 
-    int handle(int event);
+	int handle(int event);
 };
 
 void SetTopMost(Fl_Window* w);
