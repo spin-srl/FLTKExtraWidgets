@@ -22,17 +22,22 @@ public:
 	QScroll();
 	QScroll(int x, int y, int w, int h, const char* l = 0);
 
-
 	int scroll_h;
 	int content_height = 1;
 	float scroll_y_ratio = 0;
 	void resize(int X, int Y, int W, int H);
 };
 
+class QBox: public Fl_Box {
+public:
+	void draw();
+	QBox(int x, int y, int w, int h, const char* l = 0);
+};
+
 class QButton: public Fl_Button {
+public:
 	void draw();
 	int handle(int evt);
-public:
 	QButton();
 	QButton(int x, int y, int w, int h, const char* l = 0);
 
@@ -83,9 +88,16 @@ public:
 	void draw();
 };
 
-class QCloseButton: public Fl_Button {
+class QCloseButton: public QButton {
 public:
 	QCloseButton(int x, int y, int w, int h, const char* l = 0);
+
+	void draw();
+};
+
+class QMaxButton: public QButton {
+public:
+	QMaxButton(int x, int y, int w, int h, const char* l = 0);
 
 	void draw();
 };
@@ -98,3 +110,5 @@ public:
 };
 
 void SetTopMost(Fl_Window* w);
+
+void qbox_draw(int x, int y, int w, int h, bool active, Fl_Color col);

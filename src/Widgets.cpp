@@ -182,6 +182,23 @@ void QScroll::resize(int X, int Y, int W, int H)
 	Fl_Scroll::resize(X, Y, W, H);
 }
 
+QBox::QBox(int x, int y, int w, int h, const char* l): Fl_Box(x, y, w, h, l)
+{
+}
+
+void QBox::draw() {
+	fl_color(color());
+	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2);
+
+	//Borders
+	qbox_draw(x(), y(), w(), h(), active(), color());
+
+	fl_font(labelfont(), labelsize());
+	fl_color(active() ? labelcolor() : fl_darker(FL_GRAY));
+
+	fl_draw((char*)label(), x(), y(), w(), h(), align(), active() ? image() : deimage(), true);
+}
+
 // ========================= BUTTON
 QButton::QButton(int x, int y, int w, int h, const char* l): Fl_Button(x, y, w, h, l)
 {
@@ -242,15 +259,65 @@ int QButton::handle(int evt)
 	return Fl_Button::handle(evt);
 }
 
+void qbox_draw(int x, int y, int w, int h, bool active, Fl_Color col) {
+	if (active)
+	{
+		fl_color(fl_color_average(FL_WHITE, col, 0.5));
+		fl_xyline(x + 2, y + 1, x + w - 3);
+		fl_yxline(x + 1, y + 2, y + h - 3);
+		fl_color(fl_color_average(FL_BLACK, col, 0.5));
+		fl_begin_loop();
+		fl_vertex(x, y + 2);
+		fl_vertex(x + 2, y);
+		fl_vertex(x + w - 3, y);
+		fl_vertex(x + w - 1, y + 2);
+		fl_vertex(x + w - 1, y + h - 3);
+		fl_vertex(x + w - 3, y + h - 1);
+		fl_vertex(x + 2, y + h - 1);
+		fl_vertex(x, y + h - 3);
+		fl_end_loop();
+	}
+
+	else
+	{
+		fl_color(fl_darker(FL_GRAY));
+		fl_xyline(x + 1, y, x + w - 2);
+		fl_yxline(x, y + 1, y + h - 2);
+		fl_xyline(x + 1, y + h - 1, x + w - 2);
+		fl_yxline(x + w - 1, y + 1, y + h - 2);
+	}
+}
+
 void QButton::draw()
 {
-	fl_color(active() ? color() : FL_GRAY);
-	fl_rectf(x(), y(), w(), h());
+	Fl_Color col = value() ? selection_color() : color();
 
-	draw_label();
-	// fl_color(active ? labelcolor() : fl_lighter(FL_GRAY));
-	// fl_font(labelfont(), labelsize());
-	// fl_draw(label(), x(), y(), w(), h(), align() | FL_ALIGN_INSIDE, image(), true);
+	if (Fl::belowmouse() == this)
+	{
+		col = down_color();
+	}
+
+	if (!active())
+	{
+		col = fl_lighter(FL_GRAY);
+	}
+
+	//Background
+	fl_color(col);
+	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2);
+
+	//Borders
+	qbox_draw(x(), y(), w(), h(), active(), col);
+
+	fl_font(labelfont(), labelsize());
+	fl_color(active() ? labelcolor() : fl_darker(FL_GRAY));
+
+	fl_draw((char*)label(), x(), y(), w(), h(), align(), active() ? image() : deimage(), true);
+
+	if (Fl::focus() == this)
+	{
+		draw_focus();
+	}
 }
 
 // =================================================================
@@ -295,7 +362,9 @@ void QChoice::draw()
 	fl_push_clip(x(), y(), w(), h());
 
 	//Background
-	fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w(), h(), color());
+	qbox_draw(x(), y(), w(), h(), active(), color());
+	fl_color(color());
+	fl_rectf(x() + 1, y() + 1, w() - 2, h() - 2);
 
 	//Label
 	fl_color(this->labelcolor());
@@ -373,6 +442,7 @@ QCheck::QCheck(int x, int y, int w, int h, const char* l): Fl_Check_Button(x, y,
 
 void QCheck::draw()
 {
+	const int BOX_W = 15;
 	//BG
 	{
 		Fl_Color bg_color = value() ? 10 : color();
@@ -384,44 +454,51 @@ void QCheck::draw()
 
 //        fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w(), h(), bg_color);
 //        fl_draw_box(FL_BORDER_BOX, x() + w() - h() - 4, y() + 2, 20, h() - 4, bg_color);
-		fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x(), y(), w() - 21, h(), bg_color);
-		fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x() + w() - 20, y(), 20, h(), bg_color);
+		fl_draw_box(FL_FLAT_BOX, x(), y(), w() - BOX_W, h(), parent()->color());
+		fl_draw_box(FL_GLEAM_THIN_DOWN_BOX, x() + 5, y() + h() / 2 - BOX_W / 2, BOX_W, BOX_W, bg_color);
 	}
 
 	//LABEL
 	fl_color(labelcolor());
 	fl_font(labelfont(), labelsize());
-	fl_draw(label(), x() + 5, y(), w() - 20 - 10, h(), align(), NULL, 1);
+	fl_draw(label(), x() + 10 + BOX_W, y(), w() - BOX_W - 10, h(), align(), NULL, 1);
 
 	//CHECKMARK
 	if (value())
 	{
 #undef V
-#define V(X, Y) fl_vertex(x()+w()-10+X,y()+h()/2+Y);
+#define V(X, Y) fl_vertex(x()+5+(BOX_W/2)+X, y()+h()/2+Y);
 //        fl_rectf(x() + w() - 18, y() + 1, 16, h() - 2, 10);
-		fl_color(FL_BLACK);
+		fl_color(FL_WHITE);
+		fl_line_style(0, 2, 0);
 		fl_begin_line();
-		V(-5, 0);
-		V(0, 4);
-		V(5, -6);
+		// V(-4, 0);
+		V(-3, 0);
+		V(0, 3);
+		V(5, -4);
 		fl_end_line();
+		fl_line_style(0, 0, 0);
 	}
 
 	else
 	{
 		fl_color(fl_lighter(labelcolor()));
 		fl_font(labelfont(), labelsize() - 2);
-		fl_draw("no", x() + w() - 20, y(), 20, h(), FL_ALIGN_CENTER, NULL, true);
+		// fl_draw("no", x() + 5, y(), BOX_W, h(), FL_ALIGN_CENTER, NULL, true);
 	}
 }
 
-QCloseButton::QCloseButton(int x, int y, int w, int h, const char* l): Fl_Button(x, y, w, h, l)
+QCloseButton::QCloseButton(int x, int y, int w, int h, const char* l): QButton(x, y, w, h, l)
+{
+}
+
+QMaxButton::QMaxButton(int x, int y, int w, int h, const char* l): QButton(x, y, w, h, l)
 {
 }
 
 void QCloseButton::draw()
 {
-	Fl_Button::draw();
+	QButton::draw();
 #undef V
 #define V(X,Y) fl_vertex(x()+w()/2+X,y()+h()/2+Y)
 	const int R = h() / ((Fl::belowmouse() == this) ? 4 : 6);
@@ -437,6 +514,30 @@ void QCloseButton::draw()
 	fl_end_line();
 }
 
+void QMaxButton::draw()
+{
+	QButton::draw();
+#undef V
+#define V(X,Y) fl_vertex(x()+w()/2+X,y()+h()/2+Y)
+	Fl_Widget* p = this;
+
+	while (p->parent() != NULL)
+		p = p->parent();
+
+	bool root_is_fullscreen = p->as_window() && p->as_window()->fullscreen_active();
+
+	const int R = h() / ((Fl::belowmouse() == this) ? 4 : 6);
+	int MARGIN;
+
+	if (root_is_fullscreen)
+		MARGIN = (Fl::belowmouse() == this) ? 6 : 4;
+	else
+		MARGIN = (Fl::belowmouse() == this) ? 4 : 6;
+
+	fl_color(FL_WHITE);
+	fl_rect(x() + MARGIN, y() + MARGIN, w() - MARGIN * 2, h() - MARGIN * 2);
+}
+
 DraggingWindow::DraggingWindow(int x, int y, int w, int h, const char* l): Fl_Double_Window(x, y, w, h, l) {
 
 }
@@ -448,6 +549,15 @@ int DraggingWindow::handle(int event)
 	switch (event)
 	{
 	case FL_PUSH:
+		// if (Fl::event_clicks()) {
+		// 	if (fullscreen_active())
+		// 		fullscreen_off();
+		// 	else
+		// 		fullscreen();
+
+		// 	return Fl_Double_Window::handle(event);
+		// }
+
 		xoff = this->x() - Fl::event_x_root();
 		yoff = this->y() - Fl::event_y_root();
 		Fl_Double_Window::handle(event);
